@@ -1,0 +1,19 @@
+#! /bin/bash
+
+CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+FILES=`git diff --name-only --diff-filter=ACMR develop ${CURRENT_BRANCH}`
+phpcs=/usr/bin/phpcs
+phpmd=/usr/bin/phpmd
+
+
+# Run phpcs on changed files
+if [ -f $phpcs ]; then
+	$phpcs --standard=PSR2 ${FILES}
+fi
+
+# Run phpmd on changed files
+if [ -f $phpmd ]; then
+	for i in ${FILES}; do
+		$phpmd $i text unusedcode,cleancode,codesize,design,naming
+	done
+fi
