@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Ensure that we include .bash_profile
-if [ -f ~/.bash_profile ]; then
+if [[ -f ~/.bash_profile ]]; then
     source ~/.bash_profile
 fi
 
@@ -18,8 +18,12 @@ sleep 20
 
 cd ~/Git/m-api-health-check/ || exit
 
-echo "Running: nvm use v8.9.4 && npm test -- --target=${BASE_URI}"
-nvm use v8.9.4 && npm test -- --target=${BASE_URI}
+echo "Running: nvm use v8.9.4 && npm test -- --target=${BASE_URI} --domainId=${DOMAIN_ID} --environment=local --verbose"
+if [[ -n "${DOMAIN_ID}" ]]; then
+    nvm use v8.9.4 && npm test -- --target="${BASE_URI}" --domainId="${DOMAIN_ID}" --environment=local --verbose
+else
+    nvm use v8.9.4 && npm test -- --target="${BASE_URI}" --environment=local --verbose
+fi
 
 # Once testing complete remove environment
 cd ~/Git/middlelayer || exit
