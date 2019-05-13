@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -e
+
+printf '\nRunning Post Checkout Hook\n'
+prevHEAD=$1
+newHEAD=$2
+checkoutType=$3
+
+echo '    prev HEAD: '$(git name-rev --name-only "${prevHEAD}")
+echo '     new HEAD: '$(git name-rev --name-only "${newHEAD}")
+
+if [[ -r ~/.bash_profile ]]; then
+    source ~/.bash_profile
+fi
+
+composer=$(which composer)
+npm=$(which npm)
+nvm=$(which nvm)
+security_checker=$(which security-checker)
+echo "composer: ${composer} npm: ${npm} nvm: ${nvm}"
+
+if [[ "${checkoutType}" -eq 1 ]]; then
+    # composer path
+    path='./'
+    # @todo php-app directories
+
+    if [[ -r "${path}/composer.lock" ]]; then
+        DIFF=$(git diff --shortstat ${prevHEAD}..${newHEAD} ${path}/composer.lock)
+        $("${composer} validate")
+    fi
+    if [[ -r "${security_checker}" ]]; then
+        $("${security_checker}" security:check)
+    fi
+fi
