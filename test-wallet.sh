@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+cd ~/Git/wallet || exit
+echo "On branch: $(git rev-parse --abbrev-ref HEAD)"
+
 if [[ -z "${VERSION}" ]]; then
     VERSION="v1"
 fi
@@ -16,7 +19,9 @@ fi
 
 echo "Using version ${VERSION}, and domain ${DOMAIN_ID} for user_id ${USER_ID} and transaction_id ${TRANSACTION_ID}"
 
-BASEURI="http://wallet.local/api/{$VERSION}/"
+if [[ -z "${BASEURI}" ]]; then
+    BASEURI="http://wallet.local.syrupme.net/api/{$VERSION}/"
+fi
 
 PAYMENT_TYPE_EXISTS=$(curl -X GET -vvv \
     --header "Content-Type: application/json" \
