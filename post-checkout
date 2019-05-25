@@ -16,19 +16,26 @@ fi
 composer=$(which composer)
 npm=$(which npm)
 nvm=$(which nvm)
-security_checker=$(which security-checker)
 echo "composer: ${composer} npm: ${npm} nvm: ${nvm}"
 
 if [[ "${checkoutType}" -eq 1 ]]; then
     # composer path
-    path='./'
-    # @todo php-app directories
+    if [[ -d ./php-app ]]; then
+        path = './php-app'
+    else
+        path = '.'
+    fi
 
     if [[ -r "${path}/composer.lock" ]]; then
         DIFF=$(git diff --shortstat ${prevHEAD}..${newHEAD} ${path}/composer.lock)
-        $("${composer} validate")
+
+        if [[ -n $DIFF ]]; then
+            $("${composer} clear-cache")
+            $("${composer} validate")
+            $("${composer} install -o")
+        fi
     fi
-    if [[ -r "${security_checker}" ]]; then
-        $("${security_checker}" security:check)
-    fi
+fi
+if [[ -e ./Dockerfile ]]; then
+    docker run --rm -i hadolint/hadolint < ./Dockerfile
 fi
