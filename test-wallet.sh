@@ -103,6 +103,13 @@ curl -X POST -vvv \
     }" \
     ${BASEURI}wallet/credit/transactions
 
+# Check user balance
+sleep 2
+curl -X GET -vvv \
+    --header "Access-Token: ${DOMAIN_ID}" \
+    --header "Accept: application/json" \
+    ${BASEURI}wallet/user/${USER_ID}/balance
+
 sleep 2
 # Create a payment request
 curl -X POST -vvv \
