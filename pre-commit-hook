@@ -1,9 +1,9 @@
 #! /bin/bash
 
-CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
-FILES=`git diff --name-only --diff-filter=ACMR develop ${CURRENT_BRANCH}`
-phpcs=/usr/bin/phpcs
-phpmd=/usr/bin/phpmd
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+FILES=$(git diff --name-only --diff-filter=ACMR develop ${CURRENT_BRANCH})
+phpcs=$(which phpcs)
+phpmd=$(which phpmd)
 
 
 # Run phpcs on changed files
@@ -16,4 +16,16 @@ if [ -f $phpmd ]; then
 	for i in ${FILES}; do
 		$phpmd $i text unusedcode,cleancode,codesize,design,naming
 	done
+fi
+
+# Docker related commands
+if [ -f Dockerfile ]; then
+	if [ -f .hadolint.yaml ]; then
+		docker run -iv "${pwd}"/.hadolint.yaml:/.hadolint.yaml hadolint/hadolint < ./Dockerfile
+	else
+		docker run -i hadolint/hadolint < ./Dockerfile
+	fi
+fi
+if [ -f docker-compose.yml ]; then
+	docker-compose config -q
 fi
