@@ -1,0 +1,14 @@
+{
+  "name": "Behat tests",
+  "description": "some helpful behat tests to ease",
+  "autoload": {
+    "psr-4": {"Tests\\": "tests/"}
+  },
+  "require": {
+    "behat/behat": "^3.5",
+    "behat/mink-extension": "^2.3"
+  },
+  "scripts": {
+
+  }
+}

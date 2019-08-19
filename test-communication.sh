@@ -16,39 +16,22 @@ if [[ -z "${BASEURI}" ]]; then
     BASEURI="http://communication.local.syrupme.net/api/{$VERSION}/"
 fi
 
-
-curl --request POST \
-  --url "${BASEURI}"communication/event \
-  --header 'accept: application/json' \
-  --header "access-token: ${DOMAIN_ID}" \
-  --header 'cache-control: no-cache' \
-  --header 'content-type: application/json' \
-  --data "{
-    \"event\":\"PurchaseTrackingConfirmation\",
-    \"dispatchers\": [\"email\"],
-    \"recipient\": {
-        \"user_id\":\"${USER_ID}\",
-        \"email\":\"f.oosterbroek+test@quidco.com\"
-    },
-    \"content\": {
-        \"email\": {
-            \"merchant\": {
-                \"id\":\"123\",
-                \"name\":\"First TransPennine Express Test\",
-                \"url_name\":\"first-transpennine-express\",
-                \"slug\":\"first-transpennine-express\",
-                \"transaction\":{
-                    \"amount\":\"49.60\",
-                    \"cashback\":\"12.05\",
-                    \"date\":\"2018-11-12T09:40:36+0000\",
-                    \"frontend_status\":\"confirmed\",
-                    \"transaction_id\": \"12345678\"
-                }
-            }
+curl -X POST \
+  "${BASEURI}"communication/user/${USER_ID}/preferences/ \
+  -H "Access-Token: ${DOMAIN_ID}" \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -H 'clientId: www' \
+  -d '{
+"preferences": {
+        "email": {
+            "chances_to_win": false,
+            "offers": false,
+            "surveys": false
         }
-    }
-}"
+    }    
+}'
 
-# Confirm that a new event has been added to rabbitmq
-docker exec rabbitmq bash -c \
-    "rabbitmqadmin -u${RABBIT_USER} -p${RABBIT_PASS} get queue=qplatform.events.communication.triggered.transactional count=10"
+if [[ -n "$(docker ps | grep -i rabbitmq)" ]]; then
+    docker exec rabbitmq bash -c "rabbitmqctl list_queues"
+fi
