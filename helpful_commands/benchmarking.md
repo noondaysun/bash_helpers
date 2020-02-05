@@ -7,7 +7,7 @@ query="/tmp/file.sql || SELECT * FROM table WHERE 1=1"
 mysqlslap --create-schema="${database}" \
     --delimiter=";" \
     --query="${query}" \
-    --concurrency=${concurrency:-50} \
-    --iterations=${iterations:-30} \
+    --concurrency=${concurrency:-10} \
+    --iterations=${iterations:-100} \
     --no-drop
 ```
