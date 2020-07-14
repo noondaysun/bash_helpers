@@ -25,8 +25,9 @@ git stash push -m "Comment to describe stash" # Do this to get a better descript
 ```
 
 ### Running commands against all branches
+
+@see [Github filtering documentation](https://help.github.com/en/github/authenticating-to-github/removing-sensitive-data-from-a-repository)
 ```shell
-@see [Github Filtering docuemntation](https://help.github.com/en/github/authenticating-to-github/removing-sensitive-data-from-a-repository)
 Path="path to file you need delete"
 git filter-branch --force --index-filter \
     "git rm --cached --ignore-unmatch ${Path}" \
