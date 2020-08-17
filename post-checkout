@@ -6,8 +6,8 @@ prevHEAD=$1
 newHEAD=$2
 checkoutType=$3
 
-echo '    prev HEAD: '$(git name-rev --name-only "${prevHEAD}")
-echo '     new HEAD: '$(git name-rev --name-only "${newHEAD}")
+echo '    prev HEAD: '"$(git name-rev --name-only "${prevHEAD}")"
+echo '     new HEAD: '"$(git name-rev --name-only "${newHEAD}")"
 
 if [[ -r ~/.bash_profile ]]; then
     source ~/.bash_profile
@@ -27,7 +27,7 @@ if [[ "${checkoutType}" -eq 1 ]]; then
     fi
 
     if [[ -r "${path}/composer.lock" ]]; then
-        DIFF=$(git diff --shortstat ${prevHEAD}..${newHEAD} ${path}/composer.lock)
+        DIFF="$(git diff --shortstat ${prevHEAD}..${newHEAD} ${path}/composer.lock)"
 
         if [[ -n $DIFF ]]; then
             $("${composer} clear-cache")
@@ -36,6 +36,11 @@ if [[ "${checkoutType}" -eq 1 ]]; then
         fi
     fi
 fi
-if [[ -e ./Dockerfile ]]; then
-    docker run --rm -i hadolint/hadolint < ./Dockerfile
+
+# Linting
+docker run --rm --entrypoint sh -v "$(pwd):/mnt" koalaman/shellcheck-alpine -c 'for file in $(find /mnt -type f -name "*.sh"); do shellcheck --format=gcc $file; done'
+docker run --rm -v "$(pwd):/yaml" sdesbure/yamllint yamllint -f parsable .
+
+if [[ -f './Dockerfile' ]]; then
+	docker run -i --rm hadolint/hadolint < Dockerfile
 fi

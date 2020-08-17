@@ -29,3 +29,11 @@ fi
 if [ -f docker-compose.yml ]; then
 	docker-compose config -q
 fi
+
+# Linting
+docker run --rm --entrypoint sh -v "$(pwd):/mnt" koalaman/shellcheck-alpine -c 'for file in $(find /mnt -type f -name "*.sh"); do shellcheck --format=gcc $file; done'
+docker run --rm -v "$(pwd):/yaml" sdesbure/yamllint yamllint -f parsable .
+
+if [[ -f './Dockerfile' ]]; then
+	docker run -i --rm hadolint/hadolint < Dockerfile
+fi
