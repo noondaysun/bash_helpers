@@ -12,6 +12,14 @@ git rebase -i ${commit hash to be changed}  # OR # git rebase -i HEAD~${number o
 git push --force # if the upstream has been set correctly
 ```
 
+A note on rebasing and .git/hooks/post-checkout. It can result in the rebase resulting in a detached head state.<br />
+Might be worth doing someting like the following
+```shell
+mv .git/hooks/post-checkout .git/hooks/post-checkout-rebase
+git rebase -i branch
+mv .git/hooks/post-checkout-rebase .git/hooks/post-checkout
+```
+
 ### Upstream
 ```
 git branch --set-upstream-to=origin/${branch-name} ${branch-name}
