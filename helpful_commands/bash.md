@@ -16,7 +16,7 @@ cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1
 ```
 
 **Faketime**
-```
+```shell
 # Install perl and tools for make to work correctly
 # for Alpine this should be
 apk add perl build-base
@@ -35,9 +35,18 @@ FAKETIME='-100d' date +%Y-%m-%d
 Quickish overview of entries inside a memcached server
 
 [See Answer 38880283](https://stackoverflow.com/a/38880283)
-```
+```shell
 docker exec -it service bash
 
 export memcachedServers=('memcached_1' 'memcached_2' 'memcached_3' 'memcached_4' 'memcached_5')
 for i in "${memcachedServers[@]}"; do echo 'stats items' | nc "${i}" 11211 | grep -oe ':[0-9]*:' | grep -oe '[0-9]*' | sort | uniq | xargs -I{} bash -c "echo \"stats cachedump {} 1000\" | nc ${i} 11211"; done
+```
+
+**Redis**
+
+Commonish errors
+- Error: MISCONF Redis is configured to save RDB snapshots, but it is currently not able to persist on disk.
+
+```shell
+redis-cli CONFIG SET dir /tmp/; redis-cli CONFIG SET dbfilename temp.rdb
 ```
