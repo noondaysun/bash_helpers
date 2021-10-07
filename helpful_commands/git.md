@@ -17,6 +17,13 @@ git push --force # if the upstream has been set correctly
 git branch --set-upstream-to=origin/${branch-name} ${branch-name}
 ```
 
+### Dropping all local changes
+
+```shell
+git checkout .
+git clean -fXd
+```
+
 ### Stash
 ```shell
 git stash list
